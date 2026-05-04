@@ -1,73 +1,110 @@
-# React + TypeScript + Vite
+# FitPlan
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+FitPlan is a personal training planner for CrossFit, Hyrox, and strength work. It helps build and track a four-week training cycle, manage available equipment, save sessions, review history, and inspect simple training stats.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- Four-week cycle view: Base, Progression, Peak, and Deload.
+- Daily session planning with workout type, duration, rounds, notes, and exercises.
+- Equipment management, including custom equipment.
+- Exercise filtering by WOD, Hyrox, and Force.
+- Session history and lightweight usage stats.
+- AI session generation from the current cycle context.
+- Browser persistence through `window.storage` when available, with `localStorage` fallback.
 
-## React Compiler
+## Current Persistence
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+The current app is a Vite React SPA and stores data in browser-side storage.
 
-## Expanding the ESLint configuration
+Persisted keys:
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- `fitplan:sessions`
+- `fitplan:equipment`
+- `fitplan:customEquipment`
+- `fitplan:cycleStart`
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+The planned MongoDB backend is documented but not implemented yet.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Roadmap Specs
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Design specs live in `docs/superpowers/specs`.
+
+- `2026-05-04-local-mongodb-persistence-design.md`: planned local MongoDB persistence through a backend in `server/`.
+- `2026-05-04-openai-session-generation-design.md`: planned migration from the direct Anthropic browser call to a secure OpenAI backend endpoint.
+
+Important: the backend described in those specs does not exist yet. The current app still runs as a frontend-only Vite app.
+
+## Tech Stack
+
+- React 19
+- TypeScript
+- Vite
+- ESLint
+- CSS in `src/fitplan.css`
+
+## Project Structure
+
+```text
+FitPlan/
+  docs/superpowers/specs/  Design specs for planned backend work
+  public/                  Static public assets
+  src/
+    fitplan.tsx            Main FitPlan application component
+    fitplan.css            FitPlan styles
+    main.tsx               React entry point
+  package.json             Scripts and dependencies
+  vite.config.ts           Vite configuration
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Getting Started
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Install dependencies:
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
 ```
+
+Start the development server:
+
+```bash
+npm run dev
+```
+
+Build the app:
+
+```bash
+npm run build
+```
+
+Run linting:
+
+```bash
+npm run lint
+```
+
+Preview the production build:
+
+```bash
+npm run preview
+```
+
+## AI Generation Note
+
+The current generation flow is still implemented in the frontend and calls Anthropic directly. A spec exists to replace this with a secure server-side OpenAI integration using an `OPENAI_API_KEY` environment variable.
+
+Do not put API secrets in Vite client environment variables. Browser bundles are public.
+
+## Planned Local Backend
+
+The planned backend will live in `server/` and provide:
+
+- `GET /api/fitplan`
+- `PUT /api/fitplan`
+- `GET /api/health`
+- `POST /api/generate-session`
+
+Planned local services:
+
+- Vite frontend: `http://localhost:5173`
+- API server: `http://localhost:3001`
+- MongoDB: `mongodb://127.0.0.1:27017`
