@@ -1,0 +1,943 @@
+:root {
+  --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --color-background-primary: #ffffff;
+  --color-background-secondary: #f6f7f9;
+  --color-text-primary: #111827;
+  --color-text-secondary: #6b7280;
+  --color-text-tertiary: #9ca3af;
+  --color-border-secondary: #d1d5db;
+  --color-border-tertiary: #e5e7eb;
+  --border-radius-md: 8px;
+  --border-radius-lg: 10px;
+  --border-radius-xl: 14px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #fafafa;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  border: 0.5px solid var(--color-border-tertiary);
+  background: var(--color-background-primary);
+  color: var(--color-text-primary);
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: default;
+}
+
+.fitplan {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 0 0 2rem;
+  font-family: var(--font-sans);
+}
+
+.fitplan-loading,
+.fitplan-empty {
+  padding: 2rem;
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  text-align: center;
+}
+
+.fitplan-empty-text {
+  margin: 0 0 8px;
+}
+
+.fitplan-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 0 1rem;
+}
+
+.fitplan-title {
+  margin: 0;
+  color: var(--color-text-primary);
+  font-size: 22px;
+  font-weight: 500;
+}
+
+.fitplan-subtitle {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: 13px;
+}
+
+.fitplan-header-button {
+  padding: 6px 12px;
+  border-radius: var(--border-radius-md);
+  font-size: 13px;
+}
+
+.fitplan-panel {
+  margin-bottom: 1rem;
+  padding: 1.25rem;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: var(--border-radius-lg);
+  background: #ffffff;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.fitplan-card {
+  margin-bottom: 1.25rem;
+  padding: 1.25rem;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius-lg);
+  background: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.fitplan-panel-header,
+.fitplan-week-header,
+.fitplan-history-header,
+.fitplan-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.fitplan-panel-header {
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 0.5px solid var(--color-border-tertiary);
+}
+
+.fitplan-modal-header {
+  align-items: flex-start;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 0.5px solid var(--color-border-tertiary);
+}
+
+.fitplan-section-title,
+.fitplan-modal-title {
+  margin: 0;
+  color: var(--color-text-primary);
+  font-weight: 500;
+}
+
+.fitplan-section-title {
+  font-size: 15px;
+}
+
+.fitplan-modal-title {
+  margin-bottom: 2px;
+  font-size: 17px;
+}
+
+.fitplan-muted,
+.fitplan-meta,
+.fitplan-date {
+  color: var(--color-text-secondary);
+  font-size: 12px;
+}
+
+.fitplan-meta {
+  font-size: 13px;
+}
+
+.fitplan-equipment-grid,
+.fitplan-tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.fitplan-equipment-grid {
+  margin-bottom: 14px;
+}
+
+.fitplan-equipment-form,
+.fitplan-tabs,
+.fitplan-button-row,
+.fitplan-filter-row,
+.fitplan-exercise-controls,
+.fitplan-modal-meta,
+.fitplan-session-details {
+  display: flex;
+  gap: 8px;
+}
+
+.fitplan-equipment-input,
+.fitplan-date-input,
+.fitplan-select,
+.fitplan-textarea,
+.fitplan-number-input {
+  border: 0.5px solid var(--color-border-tertiary);
+  border-radius: var(--border-radius-md);
+  background: var(--color-background-secondary);
+  color: var(--color-text-primary);
+  font-size: 13px;
+}
+
+.fitplan-equipment-input {
+  flex: 1;
+  padding: 7px 12px;
+}
+
+.fitplan-date-input {
+  flex: 1;
+  padding: 6px 10px;
+}
+
+.fitplan-primary-button {
+  padding: 7px 14px;
+  border: none;
+  border-radius: var(--border-radius-md);
+  background: #f97316;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.fitplan-equipment-chip {
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  border: 1px solid var(--color-border-tertiary);
+  border-radius: 20px;
+  background: var(--color-background-secondary);
+}
+
+.fitplan-equipment-chip.is-active {
+  border-color: #f97316;
+  background: #fff7ed;
+}
+
+.fitplan-equipment-toggle {
+  padding: 5px 10px;
+  border: none;
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-size: 12px;
+}
+
+.fitplan-equipment-chip.is-active .fitplan-equipment-toggle,
+.fitplan-equipment-chip.is-active .fitplan-equipment-remove {
+  color: #c2410c;
+}
+
+.fitplan-equipment-remove {
+  padding: 5px 8px;
+  border: none;
+  border-left: 1px solid var(--color-border-tertiary);
+  background: transparent;
+  color: var(--color-text-tertiary);
+  font-size: 11px;
+}
+
+.fitplan-equipment-chip.is-active .fitplan-equipment-remove {
+  border-left-color: rgba(249, 115, 22, 0.25);
+}
+
+.fitplan-tabs {
+  margin-bottom: 1.5rem;
+  padding: 4px;
+  border-radius: var(--border-radius-lg);
+  background: var(--color-background-secondary);
+}
+
+.fitplan-tab {
+  flex: 1;
+  padding: 8px 0;
+  border: none;
+  border-radius: var(--border-radius-md);
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-size: 14px;
+}
+
+.fitplan-tab.is-active {
+  background: var(--color-background-primary);
+  color: var(--color-text-primary);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  font-weight: 500;
+}
+
+.fitplan-cycle-form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.fitplan-label {
+  color: var(--color-text-secondary);
+  font-size: 12px;
+}
+
+.fitplan-cycle-label {
+  white-space: nowrap;
+  font-size: 13px;
+}
+
+.fitplan-week-tabs {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+
+.fitplan-week-tab {
+  position: relative;
+  padding: 10px 6px;
+  border: var(--week-border-width, 1px) solid var(--week-border-color, var(--color-border-tertiary));
+  border-radius: var(--border-radius-md);
+  background: var(--week-bg, var(--color-background-secondary));
+  text-align: center;
+}
+
+.fitplan-current-dot {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--week-color);
+}
+
+.fitplan-week-number,
+.fitplan-week-name,
+.fitplan-week-count {
+  margin: 0;
+}
+
+.fitplan-week-number {
+  margin-bottom: 2px;
+  color: var(--week-color);
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.fitplan-week-name {
+  margin-bottom: 4px;
+  color: var(--color-text-secondary);
+  font-size: 10px;
+}
+
+.fitplan-week-count {
+  color: var(--color-text-tertiary);
+  font-size: 11px;
+}
+
+.fitplan-week-header {
+  margin-bottom: 12px;
+}
+
+.fitplan-week-title {
+  margin: 0 0 2px;
+  color: var(--week-color);
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.fitplan-week-desc {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: 12px;
+}
+
+.fitplan-nav-buttons {
+  display: flex;
+  gap: 6px;
+}
+
+.fitplan-nav-button {
+  padding: 4px 10px;
+  font-size: 13px;
+}
+
+.fitplan-week-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.fitplan-day-row {
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+}
+
+.fitplan-day-tile {
+  display: flex;
+  width: 44px;
+  flex-shrink: 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 0;
+  border-radius: var(--border-radius-md);
+  background: var(--color-background-secondary);
+}
+
+.fitplan-day-tile.is-today {
+  background: #f97316;
+}
+
+.fitplan-day-tile.is-deload {
+  background: #ecfdf5;
+}
+
+.fitplan-day-label,
+.fitplan-day-number {
+  margin: 0;
+}
+
+.fitplan-day-label {
+  color: var(--color-text-secondary);
+  font-size: 11px;
+}
+
+.fitplan-day-number {
+  color: var(--color-text-primary);
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.fitplan-day-tile.is-today .fitplan-day-label,
+.fitplan-day-tile.is-today .fitplan-day-number {
+  color: #ffffff;
+}
+
+.fitplan-day-tile.is-deload .fitplan-day-label,
+.fitplan-day-tile.is-deload .fitplan-day-number {
+  color: #059669;
+}
+
+.fitplan-session-card,
+.fitplan-history-card,
+.fitplan-stats-panel {
+  border: 0.5px solid var(--color-border-tertiary);
+  border-radius: var(--border-radius-lg);
+  background: var(--color-background-primary);
+}
+
+.fitplan-session-card {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  cursor: pointer;
+}
+
+.fitplan-session-main {
+  flex: 1;
+}
+
+.fitplan-session-details {
+  align-items: center;
+}
+
+.fitplan-session-summary {
+  margin: 4px 0 0;
+  color: var(--color-text-secondary);
+  font-size: 13px;
+}
+
+.fitplan-arrow {
+  color: var(--color-text-tertiary);
+  font-size: 18px;
+}
+
+.fitplan-add-session {
+  flex: 1;
+  padding: 0 14px;
+  border: 0.5px dashed var(--color-border-tertiary);
+  border-radius: var(--border-radius-lg);
+  background: transparent;
+  color: var(--color-text-tertiary);
+  font-size: 13px;
+  text-align: left;
+}
+
+.fitplan-add-session.is-deload {
+  border-color: #6ee7b7;
+  color: #059669;
+}
+
+.fitplan-badge,
+.fitplan-chip,
+.fitplan-type-button,
+.fitplan-filter-button {
+  border-radius: 20px;
+  font-size: 12px;
+}
+
+.fitplan-badge {
+  padding: 2px 8px;
+  background: var(--badge-bg, #fff7ed);
+  color: var(--badge-color, #c2410c);
+  font-weight: 500;
+}
+
+.fitplan-chip {
+  padding: 3px 10px;
+  border: 1px solid var(--chip-border, rgba(249, 115, 22, 0.3));
+  background: var(--chip-bg, #fff7ed);
+  color: var(--chip-color, #c2410c);
+}
+
+.fitplan-history-card {
+  margin-bottom: 10px;
+  padding: 14px 16px;
+}
+
+.fitplan-history-header {
+  margin-bottom: 8px;
+}
+
+.fitplan-notes {
+  margin: 8px 0 0;
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  font-style: italic;
+}
+
+.fitplan-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 1.5rem;
+}
+
+.fitplan-stat-card {
+  padding: 12px 14px;
+  border-radius: var(--border-radius-md);
+  background: var(--color-background-secondary);
+}
+
+.fitplan-stat-label {
+  margin: 0 0 4px;
+  color: var(--color-text-secondary);
+  font-size: 12px;
+}
+
+.fitplan-stat-value {
+  margin: 0;
+  color: var(--color-text-primary);
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.fitplan-stats-panel {
+  padding: 16px;
+}
+
+.fitplan-stats-panel + .fitplan-stats-panel,
+.fitplan-stats-panel.has-bottom-space {
+  margin-bottom: 1.5rem;
+}
+
+.fitplan-chart-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.fitplan-ex-type {
+  min-width: 48px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  background: var(--chip-bg, #f3f4f6);
+  color: var(--chip-color, #6b7280);
+  font-size: 12px;
+  text-align: center;
+}
+
+.fitplan-chart-name {
+  flex: 1;
+  color: var(--color-text-primary);
+  font-size: 13px;
+}
+
+.fitplan-bar {
+  width: 80px;
+  height: 6px;
+  overflow: hidden;
+  border-radius: 3px;
+  background: var(--color-background-secondary);
+}
+
+.fitplan-bar-fill {
+  width: var(--bar-width);
+  height: 100%;
+  border-radius: 3px;
+  background: #f97316;
+}
+
+.fitplan-count {
+  min-width: 20px;
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  text-align: right;
+}
+
+.fitplan-type-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.fitplan-type-card {
+  flex: 1 1 100px;
+  padding: 12px 8px;
+  border-radius: var(--border-radius-md);
+  background: var(--color-background-secondary);
+  text-align: center;
+}
+
+.fitplan-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.fitplan-modal {
+  width: 100%;
+  max-width: 560px;
+  max-height: 85vh;
+  overflow-y: auto;
+  padding: 1.5rem;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: var(--border-radius-xl);
+  background: #ffffff;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18), 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.fitplan-close-button {
+  display: flex;
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--color-background-secondary);
+  color: var(--color-text-secondary);
+  font-size: 14px;
+}
+
+.fitplan-summary {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+  padding: 10px 12px;
+  border-radius: var(--border-radius-md);
+  background: var(--color-background-secondary);
+}
+
+.fitplan-summary.in-modal {
+  margin-bottom: 16px;
+}
+
+.fitplan-summary-item {
+  flex: 1;
+  text-align: center;
+}
+
+.fitplan-summary-label {
+  margin: 0 0 4px;
+  color: var(--color-text-secondary);
+  font-size: 11px;
+}
+
+.fitplan-dots {
+  display: flex;
+  justify-content: center;
+  gap: 3px;
+}
+
+.fitplan-dot {
+  width: 10px;
+  height: 10px;
+  border: 1px solid var(--dot-border, var(--color-border-secondary));
+  border-radius: 50%;
+  background: var(--dot-bg, var(--color-border-tertiary));
+}
+
+.fitplan-summary-count {
+  margin: 3px 0 0;
+  color: var(--summary-color, var(--color-text-tertiary));
+  font-size: 11px;
+  font-weight: var(--summary-weight, 400);
+}
+
+.fitplan-summary-progress {
+  min-width: 60px;
+  padding-left: 12px;
+  border-left: 0.5px solid var(--color-border-tertiary);
+  text-align: center;
+}
+
+.fitplan-summary-progress.in-modal {
+  min-width: 56px;
+}
+
+.fitplan-progress-value {
+  margin: 0;
+  color: var(--week-color);
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.fitplan-type-row,
+.fitplan-form-grid,
+.fitplan-control-row,
+.fitplan-exercise-list,
+.fitplan-modal-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.fitplan-type-row {
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.fitplan-type-button,
+.fitplan-filter-button {
+  border: 1px solid var(--color-border-tertiary);
+  background: transparent;
+  color: var(--color-text-secondary);
+}
+
+.fitplan-type-button {
+  padding: 6px 14px;
+  font-size: 13px;
+}
+
+.fitplan-filter-button {
+  padding: 3px 8px;
+}
+
+.fitplan-type-button.is-active,
+.fitplan-filter-button.is-active {
+  border-color: #f97316;
+  background: #fff7ed;
+  color: #c2410c;
+}
+
+.fitplan-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.fitplan-field-card {
+  padding: 10px 14px;
+  border-radius: var(--border-radius-md);
+  background: var(--color-background-secondary);
+}
+
+.fitplan-field-label {
+  display: block;
+  margin-bottom: 6px;
+}
+
+.fitplan-control-row {
+  align-items: center;
+}
+
+.fitplan-range {
+  flex: 1;
+}
+
+.fitplan-duration-value {
+  min-width: 42px;
+  color: var(--color-text-primary);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.fitplan-step-button {
+  display: flex;
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--border-radius-md);
+  background: var(--color-background-primary);
+  color: var(--color-text-primary);
+  font-size: 16px;
+}
+
+.fitplan-rounds-value {
+  flex: 1;
+  color: var(--color-text-primary);
+  font-size: 18px;
+  font-weight: 500;
+  text-align: center;
+}
+
+.fitplan-subheading {
+  margin: 0 0 8px;
+  color: var(--color-text-primary);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.fitplan-exercise-list {
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.fitplan-exercise-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: var(--border-radius-md);
+  background: var(--color-background-secondary);
+}
+
+.fitplan-exercise-type {
+  padding: 2px 6px;
+  border-radius: 10px;
+  background: var(--chip-bg);
+  color: var(--chip-color);
+  font-size: 12px;
+}
+
+.fitplan-exercise-name {
+  flex: 1;
+  color: var(--color-text-primary);
+  font-size: 13px;
+}
+
+.fitplan-exercise-meta {
+  color: var(--color-text-secondary);
+  font-size: 12px;
+}
+
+.fitplan-icon-button {
+  border: none;
+  background: none;
+  color: var(--color-text-tertiary);
+  font-size: 14px;
+}
+
+.fitplan-exercise-picker {
+  margin-bottom: 14px;
+  padding: 12px;
+  border: 0.5px solid var(--color-border-tertiary);
+  border-radius: var(--border-radius-md);
+}
+
+.fitplan-filter-row {
+  margin-bottom: 8px;
+}
+
+.fitplan-select {
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 6px 8px;
+}
+
+.fitplan-exercise-controls {
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.fitplan-number-input.is-reps {
+  width: 60px;
+}
+
+.fitplan-number-input.is-distance {
+  width: 80px;
+}
+
+.fitplan-number-input.is-weight {
+  width: 70px;
+}
+
+.fitplan-add-exercise-button {
+  margin-left: auto;
+  padding: 5px 12px;
+  font-size: 13px;
+}
+
+.fitplan-textarea {
+  width: 100%;
+  min-height: 56px;
+  padding: 10px;
+  resize: vertical;
+  background: var(--color-background-primary);
+}
+
+.fitplan-error {
+  margin: 8px 0 0;
+  color: #dc2626;
+  font-size: 12px;
+}
+
+.fitplan-generating {
+  padding: 10px 0;
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  text-align: center;
+}
+
+.fitplan-modal-actions {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 0.5px solid var(--color-border-tertiary);
+}
+
+.fitplan-delete-button {
+  padding: 8px 16px;
+  border-color: #fca5a5;
+  color: #dc2626;
+  font-size: 13px;
+}
+
+.fitplan-generate-button {
+  padding: 10px 14px;
+  border-radius: var(--border-radius-md);
+  background: var(--color-background-secondary);
+  color: var(--color-text-primary);
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.fitplan-save-button {
+  flex: 1;
+  padding: 10px 0;
+  border: none;
+  border-radius: var(--border-radius-md);
+  background: #f97316;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.fitplan-save-button:disabled {
+  background: var(--color-background-secondary);
+  color: var(--color-text-tertiary);
+}
