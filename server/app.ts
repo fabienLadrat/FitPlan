@@ -12,6 +12,10 @@ type AppDependencies = {
   isMongoConnected(): boolean;
 };
 
+type HttpError = Error & {
+  statusCode?: number;
+};
+
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
@@ -70,8 +74,18 @@ export function createApp({ store, isMongoConnected }: AppDependencies) {
       next: express.NextFunction,
     ) => {
       void next;
-      console.error(error);
-      response.status(500).json({ error: "Internal server error" });
+      const errorStatusCode = (error as HttpError).statusCode;
+      const statusCode = typeof errorStatusCode === "number" ? errorStatusCode : 500;
+      const message = error instanceof Error && statusCode < 500
+        ? error.message
+        : statusCode === 503 && error instanceof Error
+          ? error.message
+          : "Internal server error";
+
+      if (statusCode >= 500 && statusCode !== 503) {
+        console.error(error);
+      }
+      response.status(statusCode).json({ error: message });
     },
   );
 

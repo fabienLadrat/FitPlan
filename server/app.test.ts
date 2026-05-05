@@ -111,4 +111,31 @@ describe("FitPlan API", () => {
     assert.equal(response.status, 200);
     assert.deepEqual(await response.json(), { ok: true, mongodb: false });
   });
+
+  it("returns service-unavailable JSON when persistence is offline", async () => {
+    const originalConsoleError = console.error;
+    const consoleErrors: unknown[] = [];
+    console.error = (...args: unknown[]) => {
+      consoleErrors.push(args);
+    };
+
+    try {
+      testServer = await startTestServer({
+        load: async () => {
+          const error = new Error("MongoDB unavailable");
+          Object.assign(error, { statusCode: 503 });
+          throw error;
+        },
+        save: async (state) => state,
+      }, false);
+
+      const response = await fetch(`${testServer.baseUrl}/api/fitplan`);
+
+      assert.equal(response.status, 503);
+      assert.deepEqual(await response.json(), { error: "MongoDB unavailable" });
+      assert.deepEqual(consoleErrors, []);
+    } finally {
+      console.error = originalConsoleError;
+    }
+  });
 });

@@ -1,7 +1,11 @@
 import "dotenv/config";
 import { MongoClient } from "mongodb";
 import { createApp } from "./app.ts";
-import { createAppStateStore, getAppStateCollection } from "./appStateStore.ts";
+import {
+  createAppStateStore,
+  createUnavailableAppStateStore,
+  getAppStateCollection,
+} from "./appStateStore.ts";
 
 const mongoUrl = process.env.MONGODB_URI ?? "mongodb://127.0.0.1:27017";
 const databaseName = process.env.MONGODB_DATABASE ?? "fitplan";
@@ -11,11 +15,19 @@ const client = new MongoClient(mongoUrl);
 let mongoConnected = false;
 
 async function startServer() {
-  await client.connect();
-  mongoConnected = true;
+  let store = createUnavailableAppStateStore();
 
-  const db = client.db(databaseName);
-  const store = createAppStateStore(getAppStateCollection(db));
+  try {
+    await client.connect();
+    mongoConnected = true;
+
+    const db = client.db(databaseName);
+    store = createAppStateStore(getAppStateCollection(db));
+  } catch (error) {
+    void error;
+    console.warn("MongoDB unavailable; API will keep running with local frontend fallback.");
+  }
+
   const app = createApp({
     store,
     isMongoConnected: () => mongoConnected,

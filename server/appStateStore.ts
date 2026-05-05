@@ -72,6 +72,24 @@ export function createAppStateStore(collection: AppStateCollection) {
   };
 }
 
+export function createUnavailableAppStateStore() {
+  function createUnavailableError() {
+    const error = new Error("MongoDB unavailable");
+    return Object.assign(error, { statusCode: 503 });
+  }
+
+  return {
+    async load(): Promise<FitPlanAppState> {
+      throw createUnavailableError();
+    },
+
+    async save(state: FitPlanAppState): Promise<FitPlanAppState> {
+      void state;
+      throw createUnavailableError();
+    },
+  };
+}
+
 export function getAppStateCollection(db: Db): Collection<AppStateDocument> {
   return db.collection<AppStateDocument>("app_state");
 }

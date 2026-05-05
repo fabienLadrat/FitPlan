@@ -3,6 +3,7 @@ import { describe, it } from "node:test";
 import {
   APP_STATE_ID,
   DEFAULT_APP_STATE,
+  createUnavailableAppStateStore,
   createAppStateStore,
   normalizeAppState,
 } from "./appStateStore.ts";
@@ -91,5 +92,20 @@ describe("createAppStateStore", () => {
       options: { upsert: true },
     });
     assert.ok(calls[0].nextDocument.updatedAt instanceof Date);
+  });
+});
+
+describe("createUnavailableAppStateStore", () => {
+  it("throws service-unavailable errors while MongoDB is offline", async () => {
+    const store = createUnavailableAppStateStore();
+
+    await assert.rejects(store.load(), {
+      message: "MongoDB unavailable",
+      statusCode: 503,
+    });
+    await assert.rejects(store.save(DEFAULT_APP_STATE), {
+      message: "MongoDB unavailable",
+      statusCode: 503,
+    });
   });
 });
