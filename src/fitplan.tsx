@@ -1,6 +1,10 @@
 import { useState, useEffect } from "react";
 import type { CSSProperties } from "react";
 import "./fitplan.css";
+import {
+  loadPersistedFitPlanState,
+  savePersistedFitPlanState,
+} from "./fitplanPersistence";
 
 type ExerciseType = "WOD" | "Hyrox" | "Force";
 type ExerciseUnit = "reps" | "m" | "cal";
@@ -38,34 +42,7 @@ type EditSession = {
   isNew: boolean;
 };
 
-type StorageValue = {
-  value: string;
-};
-
-type AppStorage = {
-  get(key: string): Promise<StorageValue | null>;
-  set(key: string, value: string): Promise<void>;
-};
-
 type CssVars = CSSProperties & Record<`--${string}`, string | number>;
-
-declare global {
-  interface Window {
-    storage?: AppStorage;
-  }
-}
-
-const appStorage: AppStorage = {
-  async get(key) {
-    if (window.storage) return window.storage.get(key);
-    const value = window.localStorage.getItem(key);
-    return value === null ? null : { value };
-  },
-  async set(key, value) {
-    if (window.storage) return window.storage.set(key, value);
-    window.localStorage.setItem(key, value);
-  },
-};
 
 function classNames(...classes: Array<string | false | null | undefined>) {
   return classes.filter(Boolean).join(" ");
@@ -157,18 +134,38 @@ export default function FitPlan() {
   // persistance
   useEffect(() => {
     async function load() {
-      try { const s = await appStorage.get("fitplan:sessions"); if (s) setSessions(JSON.parse(s.value)); } catch (error) { ignoreStorageError(error); }
-      try { const e = await appStorage.get("fitplan:equipment"); if (e) setEquipment(new Set(JSON.parse(e.value))); } catch (error) { ignoreStorageError(error); }
-      try { const c = await appStorage.get("fitplan:customEquipment"); if (c) setCustomEquipment(new Set(JSON.parse(c.value))); } catch (error) { ignoreStorageError(error); }
-      try { const cs = await appStorage.get("fitplan:cycleStart"); if (cs) { const d = new Date(JSON.parse(cs.value)); setCycleStart(d); setCycleInputVal(toInputDate(d)); } } catch (error) { ignoreStorageError(error); }
-      setLoaded(true);
+      try {
+        const state = await loadPersistedFitPlanState();
+        setSessions(state.sessions as Record<string, Session>);
+        setEquipment(new Set(state.equipment));
+        setCustomEquipment(new Set(state.customEquipment));
+
+        if (state.cycleStart !== null) {
+          const d = new Date(state.cycleStart);
+          setCycleStart(d);
+          setCycleInputVal(toInputDate(d));
+        } else {
+          setCycleStart(null);
+          setCycleInputVal("");
+        }
+      } catch (error) {
+        ignoreStorageError(error);
+      } finally {
+        setLoaded(true);
+      }
     }
     load();
   }, []);
-  useEffect(() => { if (!loaded) return; appStorage.set("fitplan:sessions", JSON.stringify(sessions)).catch(()=>{}); }, [sessions, loaded]);
-  useEffect(() => { if (!loaded) return; appStorage.set("fitplan:equipment", JSON.stringify([...equipment])).catch(()=>{}); }, [equipment, loaded]);
-  useEffect(() => { if (!loaded) return; appStorage.set("fitplan:customEquipment", JSON.stringify([...customEquipment])).catch(()=>{}); }, [customEquipment, loaded]);
-  useEffect(() => { if (!loaded || !cycleStart) return; appStorage.set("fitplan:cycleStart", JSON.stringify(cycleStart.getTime())).catch(()=>{}); }, [cycleStart, loaded]);
+  useEffect(() => {
+    if (!loaded) return;
+
+    savePersistedFitPlanState({
+      sessions,
+      equipment: [...equipment],
+      customEquipment: [...customEquipment],
+      cycleStart: cycleStart?.getTime() ?? null,
+    }).catch(ignoreStorageError);
+  }, [sessions, equipment, customEquipment, cycleStart, loaded]);
 
   // semaine courante dans le cycle
   const currentCycleWeek = cycleStart ? (() => {

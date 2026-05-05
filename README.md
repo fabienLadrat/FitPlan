@@ -10,35 +10,43 @@ FitPlan is a personal training planner for CrossFit, Hyrox, and strength work. I
 - Exercise filtering by WOD, Hyrox, and Force.
 - Session history and lightweight usage stats.
 - AI session generation from the current cycle context.
-- Browser persistence through `window.storage` when available, with `localStorage` fallback.
+- Local MongoDB persistence through the FitPlan API, with browser storage fallback.
 
-## Current Persistence
+## Persistence
 
-The current app is a Vite React SPA and stores data in browser-side storage.
+The app stores one full FitPlan state document through the local API:
 
-Persisted keys:
+- `GET /api/fitplan`
+- `PUT /api/fitplan`
+- `GET /api/health`
+
+The API writes to MongoDB database `fitplan`, collection `app_state`, document `_id: "default"`.
+
+If the API or MongoDB is unavailable, the frontend falls back to browser-side storage so the app can still open during local development.
+
+Fallback browser keys:
 
 - `fitplan:sessions`
 - `fitplan:equipment`
 - `fitplan:customEquipment`
 - `fitplan:cycleStart`
 
-The planned MongoDB backend is documented but not implemented yet.
-
 ## Roadmap Specs
 
 Design specs live in `docs/superpowers/specs`.
 
-- `2026-05-04-local-mongodb-persistence-design.md`: planned local MongoDB persistence through a backend in `server/`.
+- `2026-05-04-local-mongodb-persistence-design.md`: local MongoDB persistence through a backend in `server/`.
 - `2026-05-04-openai-session-generation-design.md`: planned migration from the direct Anthropic browser call to a secure OpenAI backend endpoint.
 
-Important: the backend described in those specs does not exist yet. The current app still runs as a frontend-only Vite app.
+Important: the OpenAI generation backend described in the roadmap does not exist yet. The current generation flow still runs from the frontend.
 
 ## Tech Stack
 
 - React 19
 - TypeScript
 - Vite
+- Express
+- MongoDB Node driver
 - ESLint
 - CSS in `src/fitplan.css`
 
@@ -48,8 +56,13 @@ Important: the backend described in those specs does not exist yet. The current 
 FitPlan/
   docs/superpowers/specs/  Design specs for planned backend work
   public/                  Static public assets
+  server/
+    app.ts                 Express app and API routes
+    appStateStore.ts       MongoDB app-state store
+    index.ts               Local API server entry point
   src/
     fitplan.tsx            Main FitPlan application component
+    fitplanPersistence.ts  Frontend API/local fallback persistence adapter
     fitplan.css            FitPlan styles
     main.tsx               React entry point
   package.json             Scripts and dependencies
@@ -70,6 +83,24 @@ Start the development server:
 npm run dev
 ```
 
+Start the API server:
+
+```bash
+npm run dev:server
+```
+
+Start the frontend and API together:
+
+```bash
+npm run dev:all
+```
+
+Expected local services:
+
+- Vite frontend: `http://localhost:5173`
+- API server: `http://localhost:3001`
+- MongoDB: `mongodb://127.0.0.1:27017`
+
 Build the app:
 
 ```bash
@@ -80,6 +111,12 @@ Run linting:
 
 ```bash
 npm run lint
+```
+
+Run API and persistence tests:
+
+```bash
+npm run test:server
 ```
 
 Preview the production build:
@@ -94,17 +131,3 @@ The current generation flow is still implemented in the frontend and calls Anthr
 
 Do not put API secrets in Vite client environment variables. Browser bundles are public.
 
-## Planned Local Backend
-
-The planned backend will live in `server/` and provide:
-
-- `GET /api/fitplan`
-- `PUT /api/fitplan`
-- `GET /api/health`
-- `POST /api/generate-session`
-
-Planned local services:
-
-- Vite frontend: `http://localhost:5173`
-- API server: `http://localhost:3001`
-- MongoDB: `mongodb://127.0.0.1:27017`
